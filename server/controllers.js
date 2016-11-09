@@ -7,27 +7,11 @@ var router = express.Router();
 
 var models = require('../models');
 
-var middleware = require('middleware.js')();
+var middleware = require('./middleware.js')();
 
 //home page
 router.get('/', (req,res) => {
-	res.sendFile(path.join(__dirname, '../html/home.html'));
-});
-
-//create user
-router.post('/api/users/create', function(req,res){
-    if (req.body.password !== req.body.confirmPassword){
-      return reject();
-    }
-	models.User.create({
-	  name: req.body.name,
-	  username: req.body.username, 
-	  password: req.body.password
-	    }).then(function(success) {
-	      	res.json(success);
-		}).catch(function(err){
-			res.json(err);
-	});
+	res.sendFile(path.join(__dirname, '../client/html/home.html'));
 });
 
 //log-in user
@@ -49,8 +33,36 @@ router.post('/api/users/login', function (req, res) {
 	});
 });
 
+router.get('/createAccount', (req,res) => {
+	res.sendFile(path.join(__dirname, '../client/html/createAccount.html'))
+});
+
+//create user
+router.post('/api/users/create', function(req,res){
+    if (req.body.password !== req.body.confirmPassword){
+      return reject();
+    }
+	models.User.create({
+	  name: req.body.name,
+	  username: req.body.username, 
+	  password: req.body.password
+	    }).then(function(success) {
+	      	res.json(success);
+		}).catch(function(err){
+			res.json(err);
+	});
+});
+
+router.get('/chat', (req,res) => {
+	res.sendFile(path.join(__dirname, '../client/html/chat.html'))
+})
+
+router.get('/api/chat', middleware.requireAuthentication, (req,res) => {
+	res.json(req.user.name)
+})
+
 //log-out user
-router.delete('/api/users/logout', middleware.requireAuthentication, function (req, res) {
+router.delete('/api/user/logout', middleware.requireAuthentication, function (req, res) {
   req.token.destroy().then(function () {
     res.status(204).send();
   }).catch(function () {

@@ -1,4 +1,4 @@
-middleware.js// Middleware: Setting up user authentication
+// Middleware: Setting up user authentication
 
 var cryptojs = require('crypto-js');
 var models = require('../models');

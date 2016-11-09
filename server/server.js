@@ -5,12 +5,13 @@ var io = require('socket.io')(http);
 
 var bodyParser = require('body-parser');
 
-var routes = require('controllers.js')
+var routes = require('./controllers.js')
 
 var models = require('../models');
 models.sequelize.sync();
 
-app.use(express.static('../client'));
+app.use(express.static('client'));
+app.use('/static', express.static('client'));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());
