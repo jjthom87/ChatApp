@@ -1,4 +1,16 @@
 $(document).ready(function(){
+
+var socket = io();
+var usersName;
+
+	socket.on('connect', function(){
+		console.log('Connected to socket.io server!');
+
+		socket.emit('joinRoom', {
+			name: usersName,
+		});
+	});
+
 	fetch('/api/chat', {
 		headers: {
             Auth: localStorage.getItem('token'),
@@ -8,8 +20,47 @@ $(document).ready(function(){
         credentials: 'include'
 		}).then((response) => response.json())
 		.then((results) => {
+			usersName = results;
 			$('#loginUserName').append(results);
 		});
+
+		fetch ('/api/messages', {
+			headers: {
+				Auth: localStorage.getItem('token'),
+	            'content-type': 'application/json',
+	            'accept': 'application/json'
+			},
+			credentials: 'include'
+		}).then((response) => response.json())
+		.then((results) => {
+			results.forEach(function(message){
+
+				var theMessage = $('<div>')
+
+				theMessage.append('<p><strong>' + message.usersName + ': ' + message.message + '</strong>' + ' - ' + message.createdOn + ' ' + '<button id="likes" data-id="'+ message.id + '"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
+				$('.messages').append(theMessage);
+
+					$('#likes').on('click', function(){
+						fetch('/api/like', {
+							method: 'post',
+							body: JSON.stringify({
+								UserId: message.UserId,
+								MessageId: message.id
+							}),
+							headers: {
+				                Auth: localStorage.getItem('token'),
+				                'content-type': 'application/json',
+				                'accept': 'application/json'
+			            	},
+			            	credentials: 'include'
+			            	}).then((response) => response.json())
+							.then((results) => {
+								console.log(results)
+							});
+					})
+			});
+
+	});
 
 		$('#logout').on('submit', function(e){
 			e.preventDefault();
@@ -21,9 +72,44 @@ $(document).ready(function(){
 				},
 				credentials: 'include'
 			}).then((results) => {
-				console.log(results);
 				window.location.href = "/";
 			});
 		});
+
+		$('#message-form').on('submit', function(e){
+			e.preventDefault();
+
+			socket.emit('message', {
+				name: usersName,
+				text: $('#inputMessage').val()
+			});
+			fetch('/api/message', {
+				method: 'post',
+	            body: JSON.stringify({
+	            	message: $('#inputMessage').val()
+	            }),
+	            headers: {
+	                Auth: localStorage.getItem('token'),
+	                'content-type': 'application/json',
+	                'accept': 'application/json'
+	            },
+	            credentials: 'include'
+				}).then((response) => response.json())
+					.then((results) => {
+						console.log(results)
+					});
+
+			$('#inputMessage').val('');
+		});
+
+		socket.on('message', function(message){
+			var timeStamp = message.timestamp;
+			var messages = $('.messages');
+			var theMessage = $('<div>');
+
+			theMessage.append('<p><strong>' + message.name + ': ' + message.text + '</strong>' + ' - ' + message.timestamp + ' ' + '<button id="likes"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
+			messages.append(theMessage);
+		});
+
 });
 

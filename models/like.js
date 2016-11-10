@@ -2,7 +2,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Like = sequelize.define('Like', {
     like: {
-      type: DataTypes.INTEGER
+      type: DataTypes.BOOLEAN
     },
     createdOn: {
     	type: DataTypes.STRING
@@ -17,6 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Like.belongsTo(models.User);
+        Like.belongsTo(models.Message);
       }
     }
   });

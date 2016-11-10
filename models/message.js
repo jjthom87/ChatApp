@@ -9,9 +9,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     usersName: {
       type: DataTypes.STRING
-    },
-    commentee: {
-      type: DataTypes.STRING
     }
   }, {
     classMethods: {
