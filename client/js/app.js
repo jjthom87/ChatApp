@@ -75,6 +75,16 @@ $(document).ready(function(){
 			});
 		});
 
+		var picDiv = $('<div>');
+		var pic = $('<img id="happy">');
+		pic.attr('src', './Happy_face.jpg').height(65).width(65)
+		picDiv.append(pic);
+		$('.images').append(picDiv);
+
+		$('#happy').on('click', function(){
+			$('#inputMessage').val('Happy-Face');
+		})
+
 		$('#message-form').on('submit', function(e){
 			e.preventDefault();
 
@@ -101,6 +111,9 @@ $(document).ready(function(){
 		});
 
 		socket.on('message', function(message){
+			if (message.text.indexOf('Happy-Face') > -1){
+				console.log('yay')
+			}
 			var timeStamp = message.timestamp;
 			var messages = $('.messages');
 			var theMessage = $('<div>');
