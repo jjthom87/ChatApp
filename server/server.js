@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
 		socket.join(req.room);
 		socket.broadcast.to(req.room).emit('message',{
 			name: 'System',
-			text: req.name + ' has joined',
+			text: 'User has joined',
 			timestamp: moment().format('MMM Do YYYY @ h:mm a')
 		});
 	});
@@ -128,16 +128,6 @@ app.post('/api/like', middleware.requireAuthentication, function(req, res){
 		  });
 	});
 });
-
-// app.put('/api/like/:id', middleware.requireAuthentication, function(req,res){
-// 	  models.Mission.findOne({ where: { uuid: uuid}}).then(function(missiontask){
-// 	        missiontask.set('isCompleted', true);
-// 	        missiontask.save();
-// 	          res.json(missiontask);
-// 	      }).catch(function(err){
-// 	        throw err
-// 	   		})	
-// });
 
 var PORT = process.env.PORT || 8000;
 
