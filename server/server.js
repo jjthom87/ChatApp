@@ -118,7 +118,8 @@ app.post('/api/like', middleware.requireAuthentication, function(req, res){
 		usersName: req.user.name,
 		createdOn: moment().format('MMM Do YYYY @ h:mm a'),
 		MessageId: req.body.MessageId,
-		UserId: req.body.UserId
+		UserId: req.body.UserId,
+		message: req.body.message
 		}).then(function(like){
 	      req.user.addLike(like).then(function(success){
 	    	res.json(like);

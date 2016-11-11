@@ -1,7 +1,6 @@
 $(document).ready(function(){
-
-var socket = io();
-var usersName;
+	var socket = io();
+	var usersName;
 
 	socket.on('connect', function(){
 		console.log('Connected to socket.io server!');
@@ -34,18 +33,18 @@ var usersName;
 		}).then((response) => response.json())
 		.then((results) => {
 			results.forEach(function(message){
+				var theMessage = $('<div>');
 
-				var theMessage = $('<div>')
-
-				theMessage.append('<p><strong>' + message.usersName + ': ' + message.message + '</strong>' + ' - ' + message.createdOn + ' ' + '<button id="likes" data-id="'+ message.id + '"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
+				theMessage.append('<p><strong>' + message.usersName + ': ' + message.message + '</strong>' + ' - ' + message.createdOn + ' ' + '<button id="' + message.id + message.UserId + '"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
 				$('.messages').append(theMessage);
 
-					$('#likes').on('click', function(){
+					$('#' + message.id + message.UserId).on('click', function(){
 						fetch('/api/like', {
 							method: 'post',
 							body: JSON.stringify({
 								UserId: message.UserId,
-								MessageId: message.id
+								MessageId: message.id,
+								message: message.message
 							}),
 							headers: {
 				                Auth: localStorage.getItem('token'),
@@ -58,9 +57,9 @@ var usersName;
 								console.log(results)
 							});
 					})
-			});
+				});
 
-	});
+		});
 
 		$('#logout').on('submit', function(e){
 			e.preventDefault();
@@ -96,7 +95,6 @@ var usersName;
 	            credentials: 'include'
 				}).then((response) => response.json())
 					.then((results) => {
-						console.log(results)
 					});
 
 			$('#inputMessage').val('');
@@ -106,9 +104,13 @@ var usersName;
 			var timeStamp = message.timestamp;
 			var messages = $('.messages');
 			var theMessage = $('<div>');
-
-			theMessage.append('<p><strong>' + message.name + ': ' + message.text + '</strong>' + ' - ' + message.timestamp + ' ' + '<button id="likes"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
+			if (message.name === 'System'){
+				theMessage.append('<p><strong>' + message.name + ': ' + message.text + '</strong>' + ' - ' + message.timestamp + '</p>');
+				messages.append(theMessage);
+			} else {
+			theMessage.append('<p><strong>' + message.name + ': ' + message.text + '</strong>' + ' - ' + message.timestamp + ' ' + '<button id="' + message.name + message.UserId + '"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" id="x"></span></button></p>');
 			messages.append(theMessage);
+			}
 		});
 
 });

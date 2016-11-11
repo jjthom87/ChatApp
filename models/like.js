@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     usersName: {
       type: DataTypes.STRING
     },
-    liker: {
+    message: {
       type: DataTypes.STRING
     }
   }, {
